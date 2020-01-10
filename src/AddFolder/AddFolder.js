@@ -5,15 +5,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class AddFolder extends React.Component {
     state = {
-        name: '',
-        id: 'abc'
+        name: ''
     };
 
     submitNewFolder = (e) => {
         // Prevents from from reloading
         e.preventDefault();
         // Updates folder list
-        this.props.addFolder(this.state.name, this.state.id);
+        this.props.addFolder(this.state.name);
         // Resets state
         this.setState({name: ''});
     }
@@ -30,10 +29,10 @@ class AddFolder extends React.Component {
                     onChange={e=>this.updateState(e.currentTarget.value)}/>
                 <div className='AddFolder__button-container'>
                     <CircleButton
-                        tag={Link}
                         to='/'
                         type='button'
                         className='AddFolder_add-note-button'
+                        onClick={e => this.submitNewFolder(e)}
                     >
                         <FontAwesomeIcon icon='plus' />
                         <br />

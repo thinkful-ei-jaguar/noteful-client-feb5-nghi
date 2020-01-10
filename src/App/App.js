@@ -6,30 +6,81 @@ import NotePageNav from '../NotePageNav/NotePageNav';
 import NoteListMain from '../NoteListMain/NoteListMain';
 import NotePageMain from '../NotePageMain/NotePageMain';
 import AddFolder from '../AddFolder/AddFolder';
-import dummyStore from '../dummy-store';
+import AddNote from '../AddNote/AddNote';
 import {getNotesForFolder, findNote, findFolder} from '../notes-helpers';
 import './App.css';
 
 class App extends Component {
     state = {
         notes: [],
-        folders: []
+        folders: [],
+        error: null
     };
 
-    addFolder = (folderName, folderId) => {
+    addFolder = (folderName) => {
+        // Creates new object as the Post request body
         const newFolder = {
-            id: folderId,
             name: folderName};
 
+        // Add folder to API
+        fetch('http://localhost:9090/folders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newFolder)
+        })
+        .then(res => res.ok ? res.json() : Promise.reject('Cannot make new folder'))
+        .then(data => console.log(data))
+        .catch(error => this.setState({error}));
+
+        // Add folder to state
         this.setState({
             folders: [...this.state.folders, newFolder]
             });
     }
 
-    componentDidMount() {
-        // fake date loading from API call
-        setTimeout(() => this.setState(dummyStore), 600);
+    addNote = (name, content, folderId) => {
+        // Creates new object as Post request body
+        const newNote = {
+            name,
+            content,
+            folderId
+        }
+
+        // Add note to API
+        fetch('http://localhost:9090/notes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newNote)
+        })
+        .then(res => res.ok ? res.json() : Promise.reject('Cannot make new note'))
+        .then(data => console.log(data))
+        .catch(error => this.setState({error}));
+
+        // Add note to state
+        this.setState({
+            notes: [...this.state.notes, newNote]
+        });
     }
+
+    componentDidMount() {
+        fetch('http://localhost:9090/folders')
+        .then(res => res.ok ? res.json() : Promise.reject('Cannot get folders'))
+        .then(folders => {
+          console.log(folders);
+          this.setState({folders});
+        })
+        .catch(error => this.setState({error}));
+
+        fetch('http://localhost:9090/notes')
+        .then(res => res.ok ? res.json() : Promise.reject('Cannot get notes'))
+        .then(notes => this.setState({notes}))
+        .catch(error => this.setState({error}));
+  }
+
 
     renderNavRoutes() {
         const {notes, folders} = this.state;
@@ -100,6 +151,11 @@ class App extends Component {
                 <Route path="/add-folder" render={ () => 
                     <AddFolder 
                     addFolder={this.addFolder} />} />
+
+                {/**Add Note route*/}
+                <Route path="/add-note" render={() => 
+                    <AddNote addNote={this.addNote} folders={this.state.folders} />}
+                />
             </>
         );
     }
