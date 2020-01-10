@@ -5,6 +5,7 @@ import NoteListNav from '../NoteListNav/NoteListNav';
 import NotePageNav from '../NotePageNav/NotePageNav';
 import NoteListMain from '../NoteListMain/NoteListMain';
 import NotePageMain from '../NotePageMain/NotePageMain';
+import AddFolder from '../AddFolder/AddFolder';
 import dummyStore from '../dummy-store';
 import {getNotesForFolder, findNote, findFolder} from '../notes-helpers';
 import './App.css';
@@ -14,6 +15,16 @@ class App extends Component {
         notes: [],
         folders: []
     };
+
+    addFolder = (folderName, folderId) => {
+        const newFolder = {
+            id: folderId,
+            name: folderName};
+
+        this.setState({
+            folders: [...this.state.folders, newFolder]
+            });
+    }
 
     componentDidMount() {
         // fake date loading from API call
@@ -85,6 +96,10 @@ class App extends Component {
                         return <NotePageMain {...routeProps} note={note} />;
                     }}
                 />
+                {/**Add Folder route */}
+                <Route path="/add-folder" render={ () => 
+                    <AddFolder 
+                    addFolder={this.addFolder} />} />
             </>
         );
     }
