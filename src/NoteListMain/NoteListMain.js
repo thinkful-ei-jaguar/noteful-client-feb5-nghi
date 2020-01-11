@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import PropTypes from 'prop-types'
 import Note from '../Note/Note'
 import CircleButton from '../CircleButton/CircleButton'
 import './NoteListMain.css'
@@ -38,3 +39,7 @@ export default function NoteListMain(props) {
 NoteListMain.defaultProps = {
   notes: [],
 }
+
+NoteListMain.propTypes = {
+  notes: PropTypes.array
+};

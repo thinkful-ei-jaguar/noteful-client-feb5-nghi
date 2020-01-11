@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Route, Link} from 'react-router-dom';
+import {Route, Link, Switch} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import NoteListNav from '../NoteListNav/NoteListNav';
 import NotePageNav from '../NotePageNav/NotePageNav';
@@ -7,6 +7,7 @@ import NoteListMain from '../NoteListMain/NoteListMain';
 import NotePageMain from '../NotePageMain/NotePageMain';
 import AddFolder from '../AddFolder/AddFolder';
 import AddNote from '../AddNote/AddNote';
+import Error from '../Error/Error';
 import {getNotesForFolder, findNote, findFolder} from '../notes-helpers';
 import './App.css';
 
@@ -17,7 +18,7 @@ class App extends Component {
         error: null
     };
 
-    addFolder = (folderName) => {
+    addFolder = (folderName, history) => {
         // Creates new object as the Post request body
         const newFolder = {
             name: folderName};
@@ -31,7 +32,10 @@ class App extends Component {
             body: JSON.stringify(newFolder)
         })
         .then(res => res.ok ? res.json() : Promise.reject('Cannot make new folder'))
-        .then(data => console.log(data))
+        .then(data => 
+            // Go back to homepage when posted successfully
+            history.push('/')
+            )
         .catch(error => this.setState({error}));
 
         // Add folder to state
@@ -40,7 +44,7 @@ class App extends Component {
             });
     }
 
-    addNote = (name, content, folderId) => {
+    addNote = (name, content, folderId, history) => {
         // Creates new object as Post request body
         const newNote = {
             name,
@@ -57,7 +61,8 @@ class App extends Component {
             body: JSON.stringify(newNote)
         })
         .then(res => res.ok ? res.json() : Promise.reject('Cannot make new note'))
-        .then(data => console.log(data))
+        // Go back to homepage when posted successfully
+        .then(data => history.push('/'))
         .catch(error => this.setState({error}));
 
         // Add note to state
@@ -67,14 +72,13 @@ class App extends Component {
     }
 
     componentDidMount() {
+        // Get folders
         fetch('http://localhost:9090/folders')
         .then(res => res.ok ? res.json() : Promise.reject('Cannot get folders'))
-        .then(folders => {
-          console.log(folders);
-          this.setState({folders});
-        })
+        .then(folders => this.setState({folders}))
         .catch(error => this.setState({error}));
 
+        // Get notes
         fetch('http://localhost:9090/notes')
         .then(res => res.ok ? res.json() : Promise.reject('Cannot get notes'))
         .then(notes => this.setState({notes}))
@@ -119,6 +123,7 @@ class App extends Component {
         const {notes, folders} = this.state;
         return (
             <>
+                <Switch>
                 {['/', '/folder/:folderId'].map(path => (
                     <Route
                         exact
@@ -147,15 +152,18 @@ class App extends Component {
                         return <NotePageMain {...routeProps} note={note} />;
                     }}
                 />
-                {/**Add Folder route */}
-                <Route path="/add-folder" render={ () => 
-                    <AddFolder 
+                {/**Add Folder route*/}
+                <Route path="/add-folder" render={ ({history}) => 
+                    <AddFolder history={history}
                     addFolder={this.addFolder} />} />
 
                 {/**Add Note route*/}
-                <Route path="/add-note" render={() => 
-                    <AddNote addNote={this.addNote} folders={this.state.folders} />}
+                <Route path="/add-note" render={({history}) => 
+                    <AddNote addNote={this.addNote} folders={this.state.folders} history={history}/>}
                 />
+
+                <Route component={Error} />
+                </Switch>
             </>
         );
     }

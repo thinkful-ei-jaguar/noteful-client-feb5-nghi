@@ -1,7 +1,6 @@
 
 
 
-#optionID {
-	background-color: white !important;
-	color: yellow;
+.whiteBackground {
+	background-color: white;
 }

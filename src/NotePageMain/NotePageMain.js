@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import Note from '../Note/Note'
 import './NotePageMain.css'
 
@@ -24,3 +25,7 @@ NotePageMain.defaultProps = {
     content: '',
   }
 }
+
+NotePageMain.propTypes = {
+  note: PropTypes.object
+};

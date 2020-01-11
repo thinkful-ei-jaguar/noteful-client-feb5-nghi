@@ -1,5 +1,6 @@
 import React from 'react'
 import { NavLink, Link } from 'react-router-dom'
+import PropTypes from 'prop-types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import CircleButton from '../CircleButton/CircleButton'
 import { countNotesForFolder } from '../notes-helpers'
@@ -42,3 +43,7 @@ export default function NoteListNav(props) {
 NoteListNav.defaultProps = {
   folders: []
 }
+
+NoteListNav.propTypes = {
+  folders: PropTypes.array
+};

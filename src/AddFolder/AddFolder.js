@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import PropTypes from 'prop-types';
 import CircleButton from '../CircleButton/CircleButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -11,8 +12,8 @@ class AddFolder extends React.Component {
     submitNewFolder = (e) => {
         // Prevents from from reloading
         e.preventDefault();
-        // Updates folder list
-        this.props.addFolder(this.state.name);
+        // Updates folder list and return to homepage
+        this.props.addFolder(this.state.name, this.props.history);
         // Resets state
         this.setState({name: ''});
     }
@@ -43,5 +44,10 @@ class AddFolder extends React.Component {
         );
     }
 }
+
+AddFolder.propTypes = {
+    history: PropTypes.object.isRequired,
+    addFolder: PropTypes.func.isRequired
+}; 
 
 export default AddFolder;

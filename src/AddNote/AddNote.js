@@ -1,6 +1,7 @@
 import React from 'react';
 import CircleButton from '../CircleButton/CircleButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PropTypes from 'prop-types';
 
 import './AddNote.css';
 
@@ -8,28 +9,26 @@ class AddNote extends React.Component {
 	state = {
 		name: null,
 		content: null,
-		folderName: null
+		folderId: null
 	};
 
 	submitNewNote = (e) => {
-		const {name, content, folderName} = this.state; 
+		const {name, content, folderId} = this.state; 
 		e.preventDefault();
 
+		// Data validation
 		if (name === null) {
 			return alert('Please insert note name');
 		}
 
-		// Find folder ID
-		const folder = this.props.folders.find(folder => folder.name === folderName);
-
-		// Add note to api and state
-		this.props.addNote(name, content, folder.id);
+		// Add note to api and state and retuns to homepage only if succesfully added
+		this.props.addNote(name, content, folderId, this.props.history);
 
 		// Clears form
 		this.setState({
 			name: null,
 			content: null,
-			folderName: null
+			folderId: null
 		});
 	}
 
@@ -37,17 +36,13 @@ class AddNote extends React.Component {
 		this.setState({name});
 	}
 
-	updateFolderName = (folderName) => {
-		this.setState({folderName});
+	updateFolderId = (folderId) => {
+		this.setState({folderId});
 	}
 
 	updateNoteContent = (content) => {
 		this.setState({content});
 	}
-
-	coolbackground = {
-	color: 'yellow'
-	};
 
 	render() {
 		return (
@@ -56,19 +51,25 @@ class AddNote extends React.Component {
                     value={this.state.name}
                     onChange={e=>this.updateNoteName(e.currentTarget.value)}/>
                 <br />
-                <input type='text' name='FolderName' placeholder='Folder Name'
-	                value={this.state.folderName}
-	                onChange={e=>this.updateFolderName(e.currentTarget.value)}/>
+                <label className="whiteBackground" htmlFor="folder">Select Folder:</label>
 	            <br />
-	            <select aria-label="Select Folder" name="folder" id="selectFolderToInsertNote">
+	            <select 
+		            aria-label="Select Folder" 
+		            name="folder" 
+		            className="whiteBackground"
+		            onChange={e=>this.updateFolderId(e.currentTarget.value)}
+		            >
 	            	{this.props.folders.map(folder => 
 	            		<option 
-	            		styles={this.coolbackground}
 	            		value={folder.id}>
 	            		{folder.name}
 	            		</option>
 	            	)}}
             	</select>
+	            <br />
+	            <input type='text' name='contentName' placeholder='Add some notes here..'
+	                value={this.state.content}
+	                onChange={e=>this.updateNoteContent(e.currentTarget.value)}/>
 	            <br />
                 <div className='AddNote__button-container'>
                     <CircleButton
@@ -86,5 +87,12 @@ class AddNote extends React.Component {
 			);
 	}
 }
+
+// Specified required prop type
+AddNote.propTypes = {
+	addNote: PropTypes.func.isRequired,
+	history: PropTypes.object.isRequired,
+	folders: PropTypes.array.isRequired
+};
 
 export default AddNote;
