@@ -1,5 +1,4 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import CircleButton from '../CircleButton/CircleButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

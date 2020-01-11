@@ -7,6 +7,7 @@ import NoteListMain from '../NoteListMain/NoteListMain';
 import NotePageMain from '../NotePageMain/NotePageMain';
 import AddFolder from '../AddFolder/AddFolder';
 import AddNote from '../AddNote/AddNote';
+import Error404 from '../Error/Error404';
 import Error from '../Error/Error';
 import {getNotesForFolder, findNote, findFolder} from '../notes-helpers';
 import './App.css';
@@ -162,7 +163,7 @@ class App extends Component {
                     <AddNote addNote={this.addNote} folders={this.state.folders} history={history}/>}
                 />
 
-                <Route component={Error} />
+                <Route component={Error404} />
                 </Switch>
             </>
         );
@@ -171,14 +172,16 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                <nav className="App__nav">{this.renderNavRoutes()}</nav>
+                <Error>
+                    <nav className="App__nav">{this.renderNavRoutes()}</nav>
                 <header className="App__header">
                     <h1>
                         <Link to="/">Noteful</Link>{' '}
                         <FontAwesomeIcon icon="check-double" />
                     </h1>
                 </header>
-                <main className="App__main">{this.renderMainRoutes()}</main>
+                    <main className="App__main">{this.renderMainRoutes()}</main>
+                </Error>
             </div>
         );
     }
