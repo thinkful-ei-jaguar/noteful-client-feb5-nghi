@@ -1,15 +1,13 @@
 import React from 'react';
-import CircleButton from '../CircleButton/CircleButton';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
 
 import './AddNote.css';
 
 class AddNote extends React.Component {
 	state = {
-		name: null,
-		content: null,
-		folderId: null
+		name: '',
+		content: '',
+		folderId: ''
 	};
 
 	submitNewNote = (e) => {
@@ -17,7 +15,7 @@ class AddNote extends React.Component {
 		e.preventDefault();
 
 		// Data validation
-		if (name === null) {
+		if (name === '') {
 			return alert('Please insert note name');
 		}
 
@@ -48,7 +46,7 @@ class AddNote extends React.Component {
 		return (
 			<form onSubmit={e => this.submitNewNote(e)} >
                 <input type='text' name='NoteName' placeholder='Note Name'
-                    value={this.state.name}
+                    value={this.state.name || ''}
                     onChange={e=>this.updateNoteName(e.currentTarget.value)}/>
                 <br />
                 <label className="whiteBackground" htmlFor="folder">Select Folder:</label>
@@ -59,29 +57,21 @@ class AddNote extends React.Component {
 		            className="whiteBackground"
 		            onChange={e=>this.updateFolderId(e.currentTarget.value)}
 		            >
-	            	{this.props.folders.map(folder => 
-	            		<option 
-	            		value={folder.id}>
+	            	{this.props.folders.map((folder, index) => 
+	            		<option
+						key={index}
+	            		value={folder.id || ''}>
 	            		{folder.name}
 	            		</option>
 	            	)}}
             	</select>
 	            <br />
 	            <input type='text' name='contentName' placeholder='Add some notes here..'
-	                value={this.state.content}
+	                value={this.state.content || ''}
 	                onChange={e=>this.updateNoteContent(e.currentTarget.value)}/>
 	            <br />
                 <div className='AddNote__button-container'>
-                    <CircleButton
-                        to='/'
-                        type='button'
-                        className='AddNote_add-note-button'
-                        onClick={e => this.submitNewNote(e)}
-                    >
-                        <FontAwesomeIcon icon='plus' />
-                        <br />
-                        Note
-                    </CircleButton>
+                        <button type='submit' onClick={e => this.submitNewNote(e)} >Note</button>
                 </div>
             </form>
 			);

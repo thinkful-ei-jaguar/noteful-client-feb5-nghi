@@ -72,6 +72,26 @@ class App extends Component {
         });
     }
 
+    removeNote = (noteId) => {
+        // Delete note
+        fetch(`http://localhost:9090/notes/${noteId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.ok ? res.json() : Promise.reject('Cannot delete note', noteId))
+        .then(data => {
+            // Updates state
+            const newNotesList = this.state.notes.filter(note => note.id !== noteId);
+            this.setState({
+                notes: newNotesList
+            });
+        }
+            )
+        .catch(error => this.setState({error}));
+    }
+
     componentDidMount() {
         // Get folders
         fetch('http://localhost:9090/folders')
@@ -140,6 +160,7 @@ class App extends Component {
                                 <NoteListMain
                                     {...routeProps}
                                     notes={notesForFolder}
+                                    removeNote={this.removeNote}
                                 />
                             );
                         }}
@@ -160,7 +181,7 @@ class App extends Component {
 
                 {/**Add Note route*/}
                 <Route path="/add-note" render={({history}) => 
-                    <AddNote addNote={this.addNote} folders={this.state.folders} history={history}/>}
+                    <AddNote addNote={this.addNote} folders={folders} history={history}/>}
                 />
 
                 <Route component={Error404} />

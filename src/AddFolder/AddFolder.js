@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CircleButton from '../CircleButton/CircleButton';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import './AddFolder.css';
 
 class AddFolder extends React.Component {
     state = {
@@ -28,16 +28,7 @@ class AddFolder extends React.Component {
                     value={this.state.name}
                     onChange={e=>this.updateState(e.currentTarget.value)}/>
                 <div className='AddFolder__button-container'>
-                    <CircleButton
-                        to='/'
-                        type='button'
-                        className='AddFolder_add-note-button'
-                        onClick={e => this.submitNewFolder(e)}
-                    >
-                        <FontAwesomeIcon icon='plus' />
-                        <br />
-                        Folder
-                    </CircleButton>
+                        <button type='submit' onClick={e => this.submitNewFolder(e)} >Folder</button>
                 </div>
             </form>
         );
