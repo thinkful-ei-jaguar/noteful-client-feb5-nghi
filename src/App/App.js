@@ -111,9 +111,7 @@ class App extends Component {
             .then(([folders, notes]) => {
                 this.setState({notes, folders});
             })
-            .catch(error => {
-                console.error({error});
-            });
+            .catch(error => this.setState({error}));
 
   }
 
@@ -163,12 +161,10 @@ class App extends Component {
                         path={path}
                         render={routeProps => {
                             const {folder_id} = routeProps.match.params;
-                            console.log('notes for folder: folder id',folder_id);
                             const notesForFolder = getNotesForFolder(
                                 notes,
                                 folder_id
                             );
-                            console.log('notes for folder',notesForFolder);
                             return (
                                 <NoteListMain
                                     {...routeProps}
