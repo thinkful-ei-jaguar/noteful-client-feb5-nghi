@@ -13,7 +13,7 @@ export default function Note(props) {
           {props.name}
         </Link>
       </h2>
-      <button className='Note__delete' type='button' onClick={e => props.removeNote(props.id)}>
+      <button className='Note__delete' type='button' onClick={e => props.removeNote(props.id, props.history)}>
         <FontAwesomeIcon icon='trash-alt' />
         {' '}
         remove
@@ -32,7 +32,7 @@ export default function Note(props) {
 }
 
 Note.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.number,
   name: PropTypes.string.isRequired,
   modified: PropTypes.string
 };

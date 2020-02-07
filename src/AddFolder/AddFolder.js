@@ -23,11 +23,12 @@ class AddFolder extends React.Component {
 
     render() {
         return (
-            <form onSubmit={e => this.submitNewFolder(e)} >
-                <input type='text' name='folderName' placeholder='Folder Name'
+            <form className='Noteful-form' onSubmit={e => this.submitNewFolder(e)} >
+                <label htmlFor='folderName'>Name:</label>
+                <input type='text' id='folderName' name='folderName' placeholder='Folder Name'
                     value={this.state.name}
                     onChange={e=>this.updateState(e.currentTarget.value)}/>
-                <div className='AddFolder__button-container'>
+                <div className='Noteful-form button'>
                         <button type='submit' onClick={e => this.submitNewFolder(e)} >Folder</button>
                 </div>
             </form>

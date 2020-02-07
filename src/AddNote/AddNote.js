@@ -5,37 +5,38 @@ import './AddNote.css';
 
 class AddNote extends React.Component {
 	state = {
-		name: '',
+		note_name: '',
 		content: '',
-		folderId: ''
+		folder_id: ''
 	};
 
 	submitNewNote = (e) => {
-		const {name, content, folderId} = this.state; 
+		const {note_name, content, folder_id} = this.state; 
 		e.preventDefault();
 
 		// Data validation
-		if (name === '') {
+		if (note_name === '') {
 			return alert('Please insert note name');
 		}
 
 		// Add note to api and state and retuns to homepage only if succesfully added
-		this.props.addNote(name, content, folderId, this.props.history);
+		this.props.addNote(note_name, content, folder_id, this.props.history);
 
 		// Clears form
 		this.setState({
-			name: null,
+			note_name: null,
 			content: null,
-			folderId: null
+			folder_id: null
 		});
+		
 	}
 
-	updateNoteName = (name) => {
-		this.setState({name});
+	updateNoteName = (note_name) => {
+		this.setState({note_name});
 	}
 
-	updateFolderId = (folderId) => {
-		this.setState({folderId});
+	updatefolder_id = (folder_id) => {
+		this.setState({folder_id});
 	}
 
 	updateNoteContent = (content) => {
@@ -44,34 +45,36 @@ class AddNote extends React.Component {
 
 	render() {
 		return (
-			<form onSubmit={e => this.submitNewNote(e)} >
-                <input type='text' name='NoteName' placeholder='Note Name'
-                    value={this.state.name || ''}
+			<form className='Noteful-form' onSubmit={e => this.submitNewNote(e)} >
+				<label htmlFor='NoteName'>Name:</label>
+                <input type='text' id='NoteName' name='NoteName' placeholder='Note Name'
+                    value={this.state.note_name || ''}
                     onChange={e=>this.updateNoteName(e.currentTarget.value)}/>
                 <br />
-                <label className="whiteBackground" htmlFor="folder">Select Folder:</label>
-	            <br />
-	            <select 
+				<label htmlFor='folder'>Select Folder:</label>
+				<select 
+					id='folder'
 		            aria-label="Select Folder" 
 		            name="folder" 
 		            className="whiteBackground"
-		            onChange={e=>this.updateFolderId(e.currentTarget.value)}
+		            onChange={e=>this.updatefolder_id(e.currentTarget.value)}
 		            >
 	            	{this.props.folders.map((folder, index) => 
 	            		<option
 						key={index}
 	            		value={folder.id || ''}>
-	            		{folder.name}
+	            		{'Folder: ' + folder.folder_name}
 	            		</option>
 	            	)}}
             	</select>
 	            <br />
-	            <input type='text' name='contentName' placeholder='Add some notes here..'
-	                value={this.state.content || ''}
-	                onChange={e=>this.updateNoteContent(e.currentTarget.value)}/>
+				<label htmlFor='text'>Name:</label>
+	            <textarea id='text' type='text' name='contentName' placeholder='Add some notes here..'
+					value={this.state.content || ''}
+	                onChange={e=>this.updateNoteContent(e.currentTarget.value)}></textarea>
 	            <br />
-                <div className='AddNote__button-container'>
-                        <button type='submit' onClick={e => this.submitNewNote(e)} >Note</button>
+                <div className='Noteful-form button'>
+                        <button type='submit' onClick={e => this.submitNewNote(e)} >Add Note</button>
                 </div>
             </form>
 			);

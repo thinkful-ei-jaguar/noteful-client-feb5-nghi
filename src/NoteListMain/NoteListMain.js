@@ -11,12 +11,12 @@ export default function NoteListMain(props) {
     <section className='NoteListMain'>
       <ul>
         {props.notes.map(note =>
-          <li key={note.id + '-' + note.name}>
+          <li key={note.id + '-' + note.note_name}>
             <Note
               key={note.id + '-' + note.folderId}
               removeNote={props.removeNote}
               id={note.id}
-              name={note.name}
+              name={note.note_name}
               modified={note.modified}
             />
           </li>

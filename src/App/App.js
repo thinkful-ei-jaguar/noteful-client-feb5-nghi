@@ -10,6 +10,7 @@ import AddNote from '../AddNote/AddNote';
 import Error404 from '../Error/Error404';
 import Error from '../Error/Error';
 import {getNotesForFolder, findNote, findFolder} from '../notes-helpers';
+import config from '../config';
 import './App.css';
 
 class App extends Component {
@@ -22,10 +23,10 @@ class App extends Component {
     addFolder = (folderName, history) => {
         // Creates new object as the Post request body
         const newFolder = {
-            name: folderName};
+            folder_name: folderName};
 
         // Add folder to API
-        fetch('http://localhost:9090/folders', {
+        fetch(`${config.API_ENDPOINT}/folders`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -43,18 +44,18 @@ class App extends Component {
         this.setState({
             folders: [...this.state.folders, newFolder]
             });
-    }
+    };
 
-    addNote = (name, content, folderId, history) => {
+    addNote = (note_name, content, folder_id, history) => {
         // Creates new object as Post request body
         const newNote = {
-            name,
+            note_name,
             content,
-            folderId
-        }
+            folder_id
+        };
 
         // Add note to API
-        fetch('http://localhost:9090/notes', {
+        fetch(`${config.API_ENDPOINT}/notes`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -63,47 +64,57 @@ class App extends Component {
         })
         .then(res => res.ok ? res.json() : Promise.reject('Cannot make new note'))
         // Go back to homepage when posted successfully
-        .then(data => history.push('/'))
+        .then(newNote => {
+            // add note to state
+            this.setState({
+                notes: [...this.state.notes, newNote]
+            });
+            history.push('/');})
         .catch(error => this.setState({error}));
 
-        // Add note to state
-        this.setState({
-            notes: [...this.state.notes, newNote]
-        });
-    }
+    };
 
-    removeNote = (noteId) => {
+    removeNote = (noteId, history) => {
         // Delete note
-        fetch(`http://localhost:9090/notes/${noteId}`, {
+        fetch(`${config.API_ENDPOINT}/notes/${noteId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             }
         })
-        .then(res => res.ok ? res.json() : Promise.reject('Cannot delete note', noteId))
+        .then(res => res.ok ? Promise.resolve('Deleted note successfully') : Promise.reject('Cannot delete note'))
         .then(data => {
             // Updates state
             const newNotesList = this.state.notes.filter(note => note.id !== noteId);
             this.setState({
                 notes: newNotesList
             });
-        }
-            )
+            history.push('/');
+        })
         .catch(error => this.setState({error}));
-    }
+    };
+
+    
 
     componentDidMount() {
-        // Get folders
-        fetch('http://localhost:9090/folders')
-        .then(res => res.ok ? res.json() : Promise.reject('Cannot get folders'))
-        .then(folders => this.setState({folders}))
-        .catch(error => this.setState({error}));
+        Promise.all([
+            fetch(`${config.API_ENDPOINT}/folders`),
+            fetch(`${config.API_ENDPOINT}/notes`)
+        ])
+            .then(([fRes, nRes]) => {
+                if (!fRes.ok)
+                    return fRes.json().then(e => Promise.reject(e));
+                if (!nRes.ok)
+                    return nRes.json().then(e => Promise.reject(e));
+                return Promise.all([fRes.json(), nRes.json()]);
+            })
+            .then(([folders, notes]) => {
+                this.setState({notes, folders});
+            })
+            .catch(error => {
+                console.error({error});
+            });
 
-        // Get notes
-        fetch('http://localhost:9090/notes')
-        .then(res => res.ok ? res.json() : Promise.reject('Cannot get notes'))
-        .then(notes => this.setState({notes}))
-        .catch(error => this.setState({error}));
   }
 
 
@@ -111,7 +122,7 @@ class App extends Component {
         const {notes, folders} = this.state;
         return (
             <>
-                {['/', '/folder/:folderId'].map(path => (
+                {['/', '/folder/:folder_id'].map(path => (
                     <Route
                         exact
                         key={path}
@@ -130,7 +141,7 @@ class App extends Component {
                     render={routeProps => {
                         const {noteId} = routeProps.match.params;
                         const note = findNote(notes, noteId) || {};
-                        const folder = findFolder(folders, note.folderId);
+                        const folder = findFolder(folders, note.folder_id);
                         return <NotePageNav {...routeProps} folder={folder} />;
                     }}
                 />
@@ -145,17 +156,19 @@ class App extends Component {
         return (
             <>
                 <Switch>
-                {['/', '/folder/:folderId'].map(path => (
+                {['/', '/folder/:folder_id'].map(path => (
                     <Route
                         exact
                         key={path}
                         path={path}
                         render={routeProps => {
-                            const {folderId} = routeProps.match.params;
+                            const {folder_id} = routeProps.match.params;
+                            console.log('notes for folder: folder id',folder_id);
                             const notesForFolder = getNotesForFolder(
                                 notes,
-                                folderId
+                                folder_id
                             );
+                            console.log('notes for folder',notesForFolder);
                             return (
                                 <NoteListMain
                                     {...routeProps}
@@ -171,7 +184,11 @@ class App extends Component {
                     render={routeProps => {
                         const {noteId} = routeProps.match.params;
                         const note = findNote(notes, noteId);
-                        return <NotePageMain {...routeProps} note={note} />;
+                        return <NotePageMain 
+                            {...routeProps} 
+                            note={note} 
+                            removeNote={this.removeNote}
+                            />;
                     }}
                 />
                 {/**Add Folder route*/}
