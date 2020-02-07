@@ -4,11 +4,28 @@ import PropTypes from 'prop-types';
 import './AddNote.css';
 
 class AddNote extends React.Component {
-	state = {
-		note_name: '',
-		content: '',
-		folder_id: ''
-	};
+
+	constructor(props) {
+		super(props);
+		this.state = {
+			note_name: '',
+			content: '',
+			folder_id: ''
+		};
+	}
+
+	// first it mounts - from render
+	// then run getDerivedStateFromProps 
+	// runs render again bc props changed after fetch in app
+	// will run everytime new props is received
+	// if use context, and the context change, the component will rerun
+	static getDerivedStateFromProps(props) {
+		// Returns object
+		// works like setting state ({})
+		if(props.folders.length > 0)
+			return {folder_id: props.folders[0].id};
+			else return null;
+	}
 
 	submitNewNote = (e) => {
 		const {note_name, content, folder_id} = this.state; 
@@ -29,7 +46,7 @@ class AddNote extends React.Component {
 			folder_id: null
 		});
 		
-	}
+	};
 
 	updateNoteName = (note_name) => {
 		this.setState({note_name});
@@ -68,7 +85,7 @@ class AddNote extends React.Component {
 	            	)}}
             	</select>
 	            <br />
-				<label htmlFor='text'>Name:</label>
+				<label htmlFor='text'>Notes:</label>
 	            <textarea id='text' type='text' name='contentName' placeholder='Add some notes here..'
 					value={this.state.content || ''}
 	                onChange={e=>this.updateNoteContent(e.currentTarget.value)}></textarea>
