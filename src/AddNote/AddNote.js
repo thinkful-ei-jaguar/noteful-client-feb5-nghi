@@ -19,12 +19,13 @@ class AddNote extends React.Component {
 	// runs render again bc props changed after fetch in app
 	// will run everytime new props is received
 	// if use context, and the context change, the component will rerun
-	static getDerivedStateFromProps(props) {
+	static getDerivedStateFromProps(props, state) {
 		// Returns object
 		// works like setting state ({})
-		if(props.folders.length > 0)
+		if(props.folders.length > 0 && !Boolean(state.folder_id)) {
 			return {folder_id: props.folders[0].id};
-			else return null;
+		}
+		else return null;	
 	}
 
 	submitNewNote = (e) => {
@@ -35,7 +36,6 @@ class AddNote extends React.Component {
 		if (note_name === '') {
 			return alert('Please insert note name');
 		}
-
 		// Add note to api and state and retuns to homepage only if succesfully added
 		this.props.addNote(note_name, content, folder_id, this.props.history);
 

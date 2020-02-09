@@ -11,6 +11,9 @@ class AddFolder extends React.Component {
     submitNewFolder = (e) => {
         // Prevents from from reloading
         e.preventDefault();
+        if(this.state.name === '') {
+            return alert('Please insert folder name');
+        }
         // Updates folder list and return to homepage
         this.props.addFolder(this.state.name, this.props.history);
         // Resets state
